@@ -1,4 +1,4 @@
-#ss-panel-v3-mod_UIChanges
+#ss-panel-v3-mod_UIChanges 官方dev版本
 #Author: 十一
 #Blog: blog.67cc.cn
 #Time：2018-8-25 11:05:33
@@ -40,10 +40,13 @@ function install_ss_panel_mod_UIm(){
 	cd default
 	rm -rf index.html
 	yum update nss curl iptables -y
-	#克隆项目
-	git clone https://github.com/marisn2017/ss-panel-v3-mod_Uim-resource.git tmp && mv tmp/.git . && rm -rf tmp && git reset --hard
+	#克隆项目 官方dev版本
+	git clone https://github.com/NimaQu/ss-panel-v3-mod_Uim.git tmp && mv tmp/.git . && rm -rf tmp && git reset --hard
 	#复制配置文件
 	# cp config/.config.php.example config/.config.php
+	#修改配置文件
+	# wget -c --no-check-certificate https://raw.githubusercontent.com/marisn2017/ss-panel-v3-mod_Uim/master/revise.sh && bash revise.sh
+	wget -N -P /home/wwwroot/default/config/ -c --no-check-certificate "https://raw.githubusercontent.com/marisn2017/ss-panel-v3-mod_Uim/master/config_new.php" -O .config.php
 	#移除防跨站攻击(open_basedir)
 	cd /home/wwwroot/default
 	chattr -i .user.ini
@@ -67,7 +70,7 @@ function install_ss_panel_mod_UIm(){
 	mysql -hlocalhost -uroot -proot <<EOF
 create database sspanel;
 use sspanel;
-source /home/wwwroot/default/sql/sspanel.sql;
+source /home/wwwroot/default/sql/glzjin_all.sql;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
 flush privileges;
 EOF
@@ -96,11 +99,12 @@ EOF
 	if [ -d "/home/wwwroot/default/" ];then
 	clear
 	echo "${Green}ss-panel-v3-mod_UIChanges安装成功~${Font}"
+	echo
+	echo -e "\033[1;5;31m请手动运行cd /home/wwwroot/default && php xcat createAdmin创建管理用户\033[0m"
 	else
 	echo "${Red}安装失败，请格盘重装~${Font}"
 	fi
 }
-
 function Libtest(){
 	#自动选择下载节点
 	GIT='raw.githubusercontent.com'
@@ -201,7 +205,7 @@ function install_centos_ssr(){
 	ldconfig
 	#清理文件
 	cd /root && rm -rf libsodium*
-	git clone -b manyuser https://github.com/esdeathlove/shadowsocks.git "/root/shadowsocks"
+	git clone -b manyuser https://github.com/glzjin/shadowsocks.git "/root/shadowsocks"
 	cd /root/shadowsocks
 	chkconfig supervisord on
 	#第一次安装
@@ -340,7 +344,7 @@ function NEW_NODE(){
 }
 
 #常规变量
-update_time="2018年11月10日21:14:00"
+update_time="2018年11月10日21:17:29"
 config="/root/shadowsocks/userapiconfig.py"
 
 #fonts color
@@ -369,7 +373,7 @@ echo -e "\033[31m#############################################################\0
 echo -e "\033[32m#欢迎使用一键ss-panel-v3-mod_UIChanges搭建脚本 and 节点添加 #\033[0m"
 echo -e "\033[34m#Blog: http://blog.67cc.cn/                                 #\033[0m"
 echo -e "\033[35m#请选择你要搭建的脚本：                                     #\033[0m"
-echo -e "\033[36m#1.  一键ss-panel-v3-mod_UIChanges搭建                      #\033[0m"
+echo -e "\033[36m#1.  一键ss-panel-v3-mod_UIChanges搭建[此脚本为测试版]      #\033[0m"
 echo -e "\033[31m#2.  一键添加SS-panel节点[新版]                             #\033[0m"
 echo -e "\033[36m#3.  一键添加SS-panel节点                                   #\033[0m"
 echo -e "\033[35m#4.  一键  BBR加速  搭建                                    #\033[0m"
@@ -381,6 +385,10 @@ echo
 read num
 if [[ $num == "1" ]]
 then
+echo -e "\033[1;5;31m此脚本为测试版本，如有问题请去博客留言解决\033[0m"
+echo 
+echo -e "\033[1;5;31m请在此等候 5 秒...\033[0m"
+sleep 5
 install_ss_panel_mod_UIm
 elif [[ $num == "2" ]]
 then
